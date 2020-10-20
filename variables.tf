@@ -1,4 +1,4 @@
-variable "name" { }
+#variable "name" { }
 variable "region" { }
 variable "rg" { }
 variable "vnet" { }

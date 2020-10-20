@@ -1,12 +1,12 @@
 resource "azurerm_network_interface" "nic" {
   count = var.num_vms
 
-  name                = "${var.name}-nic-${count.index}"
+  name                = "${var.hostname}-nic-${count.index}"
   location            = var.region
   resource_group_name = var.rg
 
   ip_configuration {
-    name                          = "${var.name}-nic-${count.index}"
+    name                          = "${var.hostname}-nic-${count.index}"
     subnet_id                     = var.subnet
     private_ip_address_allocation = "Dynamic"
   }
@@ -15,7 +15,7 @@ resource "azurerm_network_interface" "nic" {
 resource "azurerm_virtual_machine" "instance" {
   count = var.num_vms
 
-  name                  = "${var.name}-srv-${count.index}"
+  name                  = "${var.hostname}-srv-${count.index}"
   location              = var.region
   resource_group_name   = var.rg
   network_interface_ids = [azurerm_network_interface.nic[count.index].id]
@@ -31,13 +31,13 @@ resource "azurerm_virtual_machine" "instance" {
     version   = "latest"
   }
   storage_os_disk {
-    name              = "${var.name}-${count.index}-disk"
+    name              = "${var.hostname}-${count.index}-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
-    computer_name  = var.name
+    computer_name  = var.hostname
     admin_username = "ubuntu"
   }
   os_profile_linux_config {
