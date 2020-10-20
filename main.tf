@@ -1,12 +1,12 @@
 resource "azurerm_network_interface" "nic" {
   count = var.num_vms
 
-  name                = "${var.name}-nic-${count.index}"
+  name                = "${var.name}-nic-${count.index + var.offset}"
   location            = var.region
   resource_group_name = var.rg
 
   ip_configuration {
-    name                          = "${var.name}-nic-${count.index}"
+    name                          = "${var.name}-nic-${count.index + var.offset}"
     subnet_id                     = var.subnet
     private_ip_address_allocation = "Dynamic"
   }
@@ -15,10 +15,10 @@ resource "azurerm_network_interface" "nic" {
 resource "azurerm_virtual_machine" "instance" {
   count = var.num_vms
 
-  name                  = "${var.name}-srv-${count.index}"
+  name                  = "${var.name}-srv-${count.index + var.offset}"
   location              = var.region
   resource_group_name   = var.rg
-  network_interface_ids = [azurerm_network_interface.nic[count.index].id]
+  network_interface_ids = [azurerm_network_interface.nic[count.index + var.offset].id]
   vm_size               = var.instance_size
 
   delete_os_disk_on_termination    = true
@@ -31,7 +31,7 @@ resource "azurerm_virtual_machine" "instance" {
     version   = "latest"
   }
   storage_os_disk {
-    name              = "${var.name}-${count.index}-disk"
+    name              = "${var.name}-${count.index + var.offset}-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -53,8 +53,8 @@ resource "aws_route53_record" "srv" {
   count = var.num_vms
 
   zone_id = data.aws_route53_zone.domain_name.zone_id
-  name    = "srv${count.index}.${data.aws_route53_zone.domain_name.name}"
+  name    = "srv${count.index + var.offset}.${data.aws_route53_zone.domain_name.name}"
   type    = "A"
   ttl     = "1"
-  records = [azurerm_network_interface.nic[count.index].private_ip_address]
+  records = [azurerm_network_interface.nic[count.index + var.offset].private_ip_address]
 }
