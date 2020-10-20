@@ -53,7 +53,7 @@ resource "aws_route53_record" "srv" {
   count = var.num_vms
 
   zone_id = data.aws_route53_zone.domain_name.zone_id
-  name    = "${var.hostname}.${count.index}.${data.aws_route53_zone.domain_name.name}"
+  name    = "${var.hostname}${count.index}.${data.aws_route53_zone.domain_name.name}"
   type    = "A"
   ttl     = "1"
   records = [azurerm_network_interface.nic[count.index].private_ip_address]
