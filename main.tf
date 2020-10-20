@@ -18,7 +18,7 @@ resource "azurerm_virtual_machine" "instance" {
   name                  = "${var.name}-srv-${count.index}"
   location              = var.region
   resource_group_name   = var.rg
-  network_interface_ids = [azurerm_network_interface.nic.id]
+  network_interface_ids = [azurerm_network_interface.nic[count.index].id]
   vm_size               = var.instance_size
 
   delete_os_disk_on_termination    = true
@@ -56,5 +56,5 @@ resource "aws_route53_record" "srv" {
   name    = "srv${count.index}.${data.aws_route53_zone.domain_name.name}"
   type    = "A"
   ttl     = "1"
-  records = [azurerm_network_interface.nic.private_ip_address]
+  records = [azurerm_network_interface.nic[count.index].private_ip_address]
 }
