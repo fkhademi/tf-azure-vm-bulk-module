@@ -39,7 +39,7 @@ key | default | value
 :---|:---|:---
 instance_size | Standard_B1ls | The size of the Azure VM instance
 num_vms | 1 | number of VMs to create
-offset | 1 | offset to start the counting
+hostname | srv | default DNS hostname
 domain_name | avxlab.de | Route53 domain to update
 region | eu-central-1 | AWS region for the AWS TF provider
 

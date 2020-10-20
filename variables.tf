@@ -16,8 +16,8 @@ variable "instance_size" {
 variable "num_vms" {
   default = 1
 }
-variable "offset" {
-  default = 1
+variable "hostname" {
+  default = "srv"
 }
 variable "domain_name" {
   default = "avxlab.de"
