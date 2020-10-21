@@ -27,7 +27,7 @@ resource "azurerm_virtual_machine" "instance" {
   storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "16.04-LTS"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
   storage_os_disk {
@@ -47,6 +47,11 @@ resource "azurerm_virtual_machine" "instance" {
       key_data = var.ssh_key
     }
   }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update > /tmp/apt_update || cat /tmp/apt_update",
+      "sudo apt install -y iperf3 > /tmp/apt_install_perf"
+    ]
 }
 
 resource "aws_route53_record" "srv" {
