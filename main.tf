@@ -52,6 +52,13 @@ resource "azurerm_virtual_machine" "instance" {
       "sudo apt-get update > /tmp/apt_update || cat /tmp/apt_update",
       "sudo apt install -y iperf3 > /tmp/apt_install_perf"
     ]
+    connection {
+      type     = "ssh"
+      host     = azurerm_network_interface.nic[count.index].private_ip_address
+      user     = "ubuntu"
+      host_key = var.ssh_key
+    }
+
   }
 }
 
