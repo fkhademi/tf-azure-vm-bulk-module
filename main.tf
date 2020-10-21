@@ -39,9 +39,10 @@ resource "azurerm_virtual_machine" "instance" {
   os_profile {
     computer_name  = var.hostname
     admin_username = "ubuntu"
+    admin_password = "Password123"
   }
   os_profile_linux_config {
-    disable_password_authentication = true
+    disable_password_authentication = false
     ssh_keys {
       path     = "/home/ubuntu/.ssh/authorized_keys"
       key_data = var.ssh_key
@@ -56,7 +57,7 @@ resource "azurerm_virtual_machine" "instance" {
       type     = "ssh"
       host     = azurerm_network_interface.nic[count.index].private_ip_address
       user     = "ubuntu"
-      host_key = var.ssh_key
+      password = "Password123"
     }
 
   }
