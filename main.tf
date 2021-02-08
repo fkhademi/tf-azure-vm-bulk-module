@@ -65,5 +65,5 @@ resource "aws_route53_record" "srv" {
   name    = "${var.name}${count.index}.${data.aws_route53_zone.domain_name.name}"
   type    = "A"
   ttl     = "1"
-  records = [azurerm_network_interface.nic[count.index].private_ip_address]
+  records = [azurerm_public_ip.pub_ip[count.index].ip_address]
 }
