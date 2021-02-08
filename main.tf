@@ -1,6 +1,13 @@
-resource "azurerm_network_interface" "nic" {
-  count = var.num_vms
+resource "azurerm_public_ip" "pub_ip" {
+  count               = var.num_vms
+  name                = "${var.name}-${count.index}-pub_ip"
+  location            = var.region
+  resource_group_name = var.rg
+  allocation_method   = "Static"
+}
 
+resource "azurerm_network_interface" "nic" {
+  count               = var.num_vms
   name                = "${var.hostname}-nic-${count.index}"
   location            = var.region
   resource_group_name = var.rg
@@ -9,6 +16,7 @@ resource "azurerm_network_interface" "nic" {
     name                          = "${var.hostname}-nic-${count.index}"
     subnet_id                     = var.subnet
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = var.public_ip ? azurerm_public_ip.pub_ip[count.index].id : null
   }
 }
 
@@ -39,7 +47,7 @@ resource "azurerm_virtual_machine" "instance" {
   os_profile {
     computer_name  = var.hostname
     admin_username = "ubuntu"
-    admin_password = "Password123"
+    custom_data    = var.cloud_init_data
   }
   os_profile_linux_config {
     disable_password_authentication = false
@@ -47,19 +55,6 @@ resource "azurerm_virtual_machine" "instance" {
       path     = "/home/ubuntu/.ssh/authorized_keys"
       key_data = var.ssh_key
     }
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update > /tmp/apt_update || cat /tmp/apt_update",
-      "sudo apt install -y iperf3 > /tmp/apt_install_perf"
-    ]
-    connection {
-      type     = "ssh"
-      host     = azurerm_network_interface.nic[count.index].private_ip_address
-      user     = "ubuntu"
-      password = "Password123"
-    }
-
   }
 }
 

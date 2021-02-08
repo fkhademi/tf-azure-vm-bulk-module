@@ -1,11 +1,11 @@
 #variable "name" { }
 variable "region" { }
-variable "rg" { }
-variable "vnet" { }
-variable "subnet" { }
-variable "ssh_key" { }
-variable "aws_access_key" { }
-variable "aws_secret_key" { }
+variable "rg" {}
+variable "vnet" {}
+variable "subnet" {}
+variable "ssh_key" {}
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
 
 variable "aws_region" {
   default = "eu-central-1"
@@ -22,3 +22,4 @@ variable "hostname" {
 variable "domain_name" {
   default = "avxlab.de"
 }
+variable "cloud_init_data" {}
