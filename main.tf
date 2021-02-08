@@ -8,12 +8,12 @@ resource "azurerm_public_ip" "pub_ip" {
 
 resource "azurerm_network_interface" "nic" {
   count               = var.num_vms
-  name                = "${var.hostname}-nic-${count.index}"
+  name                = "${var.name}-nic-${count.index}"
   location            = var.region
   resource_group_name = var.rg
 
   ip_configuration {
-    name                          = "${var.hostname}-nic-${count.index}"
+    name                          = "${var.name}-nic-${count.index}"
     subnet_id                     = var.subnet
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = var.public_ip ? azurerm_public_ip.pub_ip[count.index].id : null
@@ -23,7 +23,7 @@ resource "azurerm_network_interface" "nic" {
 resource "azurerm_virtual_machine" "instance" {
   count = var.num_vms
 
-  name                  = "${var.hostname}-srv-${count.index}"
+  name                  = "${var.name}-srv-${count.index}"
   location              = var.region
   resource_group_name   = var.rg
   network_interface_ids = [azurerm_network_interface.nic[count.index].id]
@@ -39,13 +39,13 @@ resource "azurerm_virtual_machine" "instance" {
     version   = "latest"
   }
   storage_os_disk {
-    name              = "${var.hostname}-${count.index}-disk"
+    name              = "${var.name}-${count.index}-disk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
-    computer_name  = var.hostname
+    computer_name  = var.name
     admin_username = "ubuntu"
     custom_data    = var.cloud_init_data
   }
@@ -62,7 +62,7 @@ resource "aws_route53_record" "srv" {
   count = var.num_vms
 
   zone_id = data.aws_route53_zone.domain_name.zone_id
-  name    = "${var.hostname}${count.index}.${data.aws_route53_zone.domain_name.name}"
+  name    = "${var.name}${count.index}.${data.aws_route53_zone.domain_name.name}"
   type    = "A"
   ttl     = "1"
   records = [azurerm_network_interface.nic[count.index].private_ip_address]

@@ -16,7 +16,7 @@ variable "instance_size" {
 variable "num_vms" {
   default = 1
 }
-variable "hostname" {
+variable "name" {
   default = "srv"
 }
 variable "domain_name" {
