@@ -70,6 +70,7 @@ resource "azurerm_network_security_group" "nsg" {
     destination_address_prefix = "*"
   }
 }
+
 resource "azurerm_network_interface_security_group_association" "nsg" {
   count                     = var.num_vms
   network_interface_id      = azurerm_network_interface.nic[count.index].id
