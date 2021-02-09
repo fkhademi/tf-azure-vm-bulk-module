@@ -1,5 +1,5 @@
 #variable "name" { }
-variable "region" { }
+variable "region" {}
 variable "rg" {}
 variable "vnet" {}
 variable "subnet" {}
